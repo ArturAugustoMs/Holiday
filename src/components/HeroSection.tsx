@@ -1,11 +1,37 @@
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import logo from "@/assets/holiday-logo.png";
-import heroImg from "@/assets/hero-birthday.jpg";
+import heroImg1 from "@/assets/hero-birthday.jpg";
+import heroImg2 from "@/assets/hero-birthday-2.jpg";
+import heroImg3 from "@/assets/hero-birthday-3.jpg";
+
+const heroImages = [
+  { src: heroImg1, alt: "Festa de aniversário infantil" },
+  { src: heroImg2, alt: "Crianças celebrando aniversário" },
+  { src: heroImg3, alt: "Festa com bolo e confete" },
+];
 
 const HeroSection = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    onSelect();
+
+    const autoplay = setInterval(() => emblaApi.scrollNext(), 4000);
+    return () => clearInterval(autoplay);
+  }, [emblaApi, onSelect]);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-      {/* Decorative circles */}
       <div className="absolute top-20 right-10 w-72 h-72 rounded-full bg-accent/20 blur-3xl" />
       <div className="absolute bottom-20 left-10 w-96 h-96 rounded-full bg-secondary/15 blur-3xl" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl" />
@@ -53,14 +79,35 @@ const HeroSection = () => {
             className="relative"
           >
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/20">
-              <img
-                src={heroImg}
-                alt="Festa de aniversário infantil"
-                className="w-full h-auto object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+              <div ref={emblaRef} className="overflow-hidden">
+                <div className="flex">
+                  {heroImages.map((img, i) => (
+                    <div key={i} className="flex-[0_0_100%] min-w-0">
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        className="w-full h-[400px] md:h-[500px] object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
+              {/* Dots */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {heroImages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => emblaApi?.scrollTo(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      i === selectedIndex
+                        ? "bg-primary-foreground w-6"
+                        : "bg-primary-foreground/50"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
-            {/* Floating badge */}
             <motion.div
               className="absolute -bottom-4 -left-4 bg-secondary text-secondary-foreground px-6 py-3 rounded-2xl shadow-lg font-bold text-sm"
               animate={{ y: [0, -8, 0] }}

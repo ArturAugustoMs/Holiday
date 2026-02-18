@@ -1,6 +1,16 @@
+import { useCallback, useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import AnimatedSection from "./AnimatedSection";
-import campImg from "@/assets/holiday-camp.jpg";
+import campImg1 from "@/assets/holiday-camp.jpg";
+import campImg2 from "@/assets/holiday-camp-2.jpg";
+import campImg3 from "@/assets/holiday-camp-3.jpg";
 import { Star, Users, Sun, Music } from "lucide-react";
+
+const campImages = [
+  { src: campImg1, alt: "Holiday Camp - atividades" },
+  { src: campImg2, alt: "Holiday Camp - ao ar livre" },
+  { src: campImg3, alt: "Holiday Camp - artes" },
+];
 
 const benefits = [
   { icon: Star, text: "Atividades exclusivas e temáticas" },
@@ -10,18 +20,56 @@ const benefits = [
 ];
 
 const HolidayCampSection = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    onSelect();
+
+    const autoplay = setInterval(() => emblaApi.scrollNext(), 5000);
+    return () => clearInterval(autoplay);
+  }, [emblaApi, onSelect]);
+
   return (
     <section id="camp" className="py-24 md:py-32 bg-muted/50">
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <AnimatedSection>
             <div className="relative rounded-3xl overflow-hidden shadow-xl">
-              <img
-                src={campImg}
-                alt="Holiday Camp"
-                className="w-full h-[450px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-tr from-secondary/20 to-transparent" />
+              <div ref={emblaRef} className="overflow-hidden">
+                <div className="flex">
+                  {campImages.map((img, i) => (
+                    <div key={i} className="flex-[0_0_100%] min-w-0">
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        className="w-full h-[450px] object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-secondary/20 to-transparent pointer-events-none" />
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {campImages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => emblaApi?.scrollTo(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      i === selectedIndex
+                        ? "bg-primary-foreground w-6"
+                        : "bg-primary-foreground/50"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </AnimatedSection>
 
