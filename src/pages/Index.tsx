@@ -5,6 +5,7 @@ import HolidayCampSection from "@/components/HolidayCampSection";
 import MoveItSection from "@/components/MoveItSection";
 import ContactSection from "@/components/ContactSection";
 import VideoSection from "@/components/VideoSection";
+import ParallaxImageSection from "@/components/ParallaxImageSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -13,6 +14,7 @@ const Index = () => {
       <Navbar />
       <AboutSection />
       <HeroSection />
+      <ParallaxImageSection />
       <HolidayCampSection />
       <MoveItSection />
       <ContactSection />
