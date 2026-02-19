@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import AnimatedSection from "./AnimatedSection";
+import ScrollParallax from "./ScrollParallax";
 import campImg1 from "@/assets/holiday-camp.jpg";
 import campImg2 from "@/assets/holiday-camp-2.jpg";
 import campImg3 from "@/assets/holiday-camp-3.jpg";
@@ -42,35 +43,37 @@ const HolidayCampSection = () => {
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <AnimatedSection>
-            <div className="relative rounded-3xl overflow-hidden shadow-xl">
-              <div ref={emblaRef} className="overflow-hidden">
-                <div className="flex">
-                  {campImages.map((img, i) => (
-                    <div key={i} className="flex-[0_0_100%] min-w-0">
-                      <img
-                        src={img.src}
-                        alt={img.alt}
-                        className="w-full h-[450px] object-cover"
-                      />
-                    </div>
+            <ScrollParallax>
+              <div className="relative rounded-3xl overflow-hidden shadow-xl">
+                <div ref={emblaRef} className="overflow-hidden">
+                  <div className="flex">
+                    {campImages.map((img, i) => (
+                      <div key={i} className="flex-[0_0_100%] min-w-0">
+                        <img
+                          src={img.src}
+                          alt={img.alt}
+                          className="w-full h-[450px] object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-secondary/20 to-transparent pointer-events-none" />
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {campImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => emblaApi?.scrollTo(i)}
+                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                        i === selectedIndex
+                          ? "bg-primary-foreground w-6"
+                          : "bg-primary-foreground/50"
+                      }`}
+                    />
                   ))}
                 </div>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-tr from-secondary/20 to-transparent pointer-events-none" />
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                {campImages.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => emblaApi?.scrollTo(i)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                      i === selectedIndex
-                        ? "bg-primary-foreground w-6"
-                        : "bg-primary-foreground/50"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
+            </ScrollParallax>
           </AnimatedSection>
 
           <AnimatedSection delay={0.2}>

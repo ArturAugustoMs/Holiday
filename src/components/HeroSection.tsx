@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import ScrollParallax from "./ScrollParallax";
 import logo from "@/assets/holiday-logo.png";
 import heroImg1 from "@/assets/hero-birthday.jpg";
 import heroImg2 from "@/assets/hero-birthday-2.jpg";
@@ -78,36 +79,37 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="relative"
           >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/20">
-              <div ref={emblaRef} className="overflow-hidden">
-                <div className="flex">
-                  {heroImages.map((img, i) => (
-                    <div key={i} className="flex-[0_0_100%] min-w-0">
-                      <img
-                        src={img.src}
-                        alt={img.alt}
-                        className="w-full h-[400px] md:h-[500px] object-cover"
-                      />
-                    </div>
+            <ScrollParallax offset={40}>
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/20">
+                <div ref={emblaRef} className="overflow-hidden">
+                  <div className="flex">
+                    {heroImages.map((img, i) => (
+                      <div key={i} className="flex-[0_0_100%] min-w-0">
+                        <img
+                          src={img.src}
+                          alt={img.alt}
+                          className="w-full h-[400px] md:h-[500px] object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {heroImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => emblaApi?.scrollTo(i)}
+                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                        i === selectedIndex
+                          ? "bg-primary-foreground w-6"
+                          : "bg-primary-foreground/50"
+                      }`}
+                    />
                   ))}
                 </div>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
-              {/* Dots */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                {heroImages.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => emblaApi?.scrollTo(i)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                      i === selectedIndex
-                        ? "bg-primary-foreground w-6"
-                        : "bg-primary-foreground/50"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
+            </ScrollParallax>
             <motion.div
               className="absolute -bottom-4 -left-4 bg-secondary text-secondary-foreground px-6 py-3 rounded-2xl shadow-lg font-bold text-sm"
               animate={{ y: [0, -8, 0] }}
